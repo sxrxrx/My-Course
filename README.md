@@ -2,4 +2,4 @@
 
 - Repository Pattern
 - MVVM Pattern
-- Remake Dependency Injection Koin
+- Change ViewModelFactory using Dependency Injection Koin
