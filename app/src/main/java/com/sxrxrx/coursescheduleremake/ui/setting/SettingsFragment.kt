@@ -7,10 +7,13 @@ import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.sxrxrx.coursescheduleremake.R
-import com.sxrxrx.coursescheduleremake.notification.DailyReminder
+import com.sxrxrx.coursescheduleremake.notif.DailyReminder
 import com.sxrxrx.coursescheduleremake.util.NightMode
+import org.koin.android.ext.android.inject
 
 class SettingsFragment : PreferenceFragmentCompat() {
+
+    private val dailyReminder: DailyReminder by inject()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
@@ -22,7 +25,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             updateTheme(value)
         }
 
-        val dailyReminder = DailyReminder()
         val prefNotification =
             findPreference<SwitchPreference>(getString(R.string.pref_key_notify))
         prefNotification?.setOnPreferenceChangeListener { _, _ ->

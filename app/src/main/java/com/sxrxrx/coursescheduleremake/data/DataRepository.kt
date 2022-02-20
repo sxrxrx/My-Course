@@ -1,14 +1,10 @@
 package com.sxrxrx.coursescheduleremake.data
 
-import android.content.Context
-import android.util.TimeUtils
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.sxrxrx.coursescheduleremake.util.*
 import com.sxrxrx.coursescheduleremake.util.QueryUtil.nearestQuery
-import java.time.LocalDateTime
 import java.util.*
 
 class DataRepository(private val dao: CourseDao) {
@@ -47,18 +43,6 @@ class DataRepository(private val dao: CourseDao) {
     }
 
     companion object {
-        @Volatile
-        private var instance: DataRepository? = null
         private const val PAGE_SIZE = 10
-
-        fun getInstance(context: Context): DataRepository? {
-            return instance ?: synchronized(DataRepository::class.java) {
-                if (instance == null) {
-                    val database = CourseDatabase.getInstance(context)
-                    instance = DataRepository(database.courseDao())
-                }
-                return instance
-            }
-        }
     }
 }

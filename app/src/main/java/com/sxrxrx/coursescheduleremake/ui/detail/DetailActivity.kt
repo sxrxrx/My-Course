@@ -3,15 +3,14 @@ package com.sxrxrx.coursescheduleremake.ui.detail
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.sxrxrx.coursescheduleremake.R
 import com.sxrxrx.coursescheduleremake.data.Course
-import com.sxrxrx.coursescheduleremake.ui.home.HomeViewModel
-import com.sxrxrx.coursescheduleremake.ui.home.HomeViewModelFactory
+import com.sxrxrx.coursescheduleremake.databinding.ActivityDetailBinding
+
 import com.sxrxrx.coursescheduleremake.util.DayName.Companion.getByNumber
 
 class DetailActivity : AppCompatActivity() {
@@ -20,16 +19,21 @@ class DetailActivity : AppCompatActivity() {
         const val COURSE_ID = "courseId"
     }
 
-    private lateinit var viewModel: DetailViewModel
+    private val detailViewModel: DetailViewModel by viewModel()
+    private lateinit var binding: ActivityDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+
+        binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val courseId = intent.getIntExtra(COURSE_ID, 0)
-        val factory = DetailViewModelFactory.createFactory(this, courseId)
-        viewModel = ViewModelProvider(this,factory).get(DetailViewModel::class.java)
-        viewModel.course.observe(this, Observer(this::showCourseDetail))
+//        val factory = DetailViewModelFactory.createFactory(this, courseId)
+//        viewModel = ViewModelProvider(this,factory).get(DetailViewModel::class.java)
+
+        detailViewModel.setCourseId(courseId)
+        detailViewModel.course.observe(this, Observer(this::showCourseDetail))
 
     }
 
@@ -39,10 +43,10 @@ class DetailActivity : AppCompatActivity() {
             val dayName = getByNumber(day)
             val timeFormat = String.format(timeString, dayName, startTime, endTime)
 
-            findViewById<TextView>(R.id.tv_course_name).text = courseName
-            findViewById<TextView>(R.id.tv_time).text = timeFormat
-            findViewById<TextView>(R.id.tv_lecturer).text = lecturer
-            findViewById<TextView>(R.id.tv_note).text = note
+            binding.tvCourseName.text = courseName
+            binding.tvTime.text = timeFormat
+            binding.tvLecturer.text = lecturer
+            binding.tvNote.text = note
         }
     }
 
@@ -58,7 +62,7 @@ class DetailActivity : AppCompatActivity() {
                     setMessage(getString(R.string.delete_alert))
                     setNegativeButton(getString(R.string.no), null)
                     setPositiveButton(getString(R.string.yes)) { _, _ ->
-                        viewModel.delete()
+                        detailViewModel.delete()
                         finish()
                     }
                     show()

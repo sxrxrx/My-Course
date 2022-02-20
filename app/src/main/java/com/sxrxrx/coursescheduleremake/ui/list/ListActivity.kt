@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,10 +20,11 @@ import com.sxrxrx.coursescheduleremake.ui.detail.DetailActivity
 import com.sxrxrx.coursescheduleremake.ui.setting.SettingsActivity
 import com.sxrxrx.coursescheduleremake.util.SortType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ListActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: ListViewModel
+    private val listViewModel: ListViewModel by viewModel()
     private lateinit var rvCourse: RecyclerView
     private val courseAdapter: CourseAdapter by lazy {
         CourseAdapter(::onCourseClick)
@@ -35,9 +35,6 @@ class ListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val factory = ListViewModelFactory.createFactory(this)
-        viewModel = ViewModelProvider(this, factory).get(ListViewModel::class.java)
 
         setFabClick()
         setUpRecycler()
@@ -68,7 +65,7 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun updateList() {
-        viewModel.courses.observe(this) {
+        listViewModel.courses.observe(this) {
             courseAdapter.submitList(it)
             findViewById<TextView>(R.id.tv_empty_list).visibility =
                 if (it.isEmpty()) View.VISIBLE else View.GONE
@@ -89,7 +86,7 @@ class ListActivity : AppCompatActivity() {
             menuInflater.inflate(R.menu.sort_course, menu)
 
             setOnMenuItemClickListener {
-                viewModel.sort(
+                listViewModel.sort(
                     when (it.itemId) {
                         R.id.sort_time -> SortType.TIME
                         R.id.sort_course_name -> SortType.COURSE_NAME
@@ -141,7 +138,7 @@ class ListActivity : AppCompatActivity() {
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val course = (viewHolder as CourseViewHolder).getCourse()
-            viewModel.delete(course)
+            listViewModel.delete(course)
         }
     }
 }

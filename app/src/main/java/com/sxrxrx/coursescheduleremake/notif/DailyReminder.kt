@@ -1,4 +1,4 @@
-package com.sxrxrx.coursescheduleremake.notification
+package com.sxrxrx.coursescheduleremake.notif
 
 import android.app.AlarmManager
 import android.app.NotificationChannel
@@ -19,14 +19,13 @@ import com.sxrxrx.coursescheduleremake.ui.home.HomeActivity
 import com.sxrxrx.coursescheduleremake.util.*
 import java.util.*
 
-class DailyReminder : BroadcastReceiver() {
+class DailyReminder(private val repository: DataRepository) : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         executeThread {
-            val repository = DataRepository.getInstance(context)
-            val courses = repository?.getTodaySchedule()
+            val courses = repository.getTodaySchedule()
 
-            courses?.let {
+            courses.let {
                 if (it.isNotEmpty()) showNotification(context, it)
             }
         }
